@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <meta charset="ISO-8859-1"> -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Employee Reimbursement System</title>
+<link rel="icon" href="favicon.ico">
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+	crossorigin="anonymous">
+
+<style>
+
+.hidden {
+display:none;
+}
+
+</style>
+
+</head>
+<body>
+
+	<div class="container-fluid mx-auto">
+		<h2 id="welcome">Ya estoy adentro!!!</h2>
+		
+		<table class="table table-striped" id="tableUserReimb">
+		</table>
+			
+	</div>
+
+	<section>
+
+		<form class="hidden" id="formNewReimb" enctype="multipart/form-data" method="POST" onsubmit="sendReimb()">
+			<fieldset>
+				<legend>Reimbursement Form</legend>
+				<select name="selectType" id="selectType">
+					<option value="0">Select expenses type:</option>
+					<option value="1">Relocation</option>
+					<option value="2">Travel</option>
+					<option value="3">Represent</option>
+				</select><br><br>
+				<label for="amount">Amount</label>
+				<input type="number" name="amount" id="amountId" min="0" placeholder="amount" required /><br><br>
+				<label for="description">Description</label>
+				<textarea name="description" id="descripId"></textarea><br><br>
+				<label for="uploadReimb">Upload your receipt</label><br>
+				<input type="file" name="uploadReimb" id="uploadReimb"/><br><br><br><br>
+				<input type="submit" value="send"/>
+
+			</fieldset>
+
+		</form>
+	</section>
+	
+	<br><br><br>
+	
+		<button onclick="openForm()">New Reimbursement</button>
+		<br><br>
+		
+		<button onclick="logout()">Logout</button>
+		<br><br>
+
+	<script>
+		let welcome = document.getElementById('welcome');
+
+		let userString = sessionStorage.getItem('currentUser');
+
+		if (userString === null) {
+			window.location = 'http://localhost:8080/reimbursement/';
+
+		} else {
+			let currentUser = JSON.parse(userString);
+
+			console.log(currentUser);
+
+			if (currentUser != null) {
+				welcome.innerHTML = "Welcome " + currentUser.firstName + " "
+						+ currentUser.lastName;
+
+			}
+		}
+		
+		var request = new XMLHttpRequest()
+
+		request.open('GET', 'http://localhost:8080/reimbursement/showReimb', true)
+		request.onload = function () {
+		  // Begin accessing JSON data here
+		  var data = JSON.parse(this.response)
+		  let table = document.getElementById("tableUserReimb")
+		  let tr = document.createElement("tr")
+		  table.appendChild(tr)
+		  
+		  let th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Submitted Date"
+		  th.setAttribute('width', '150')
+	  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Amount ($)"
+		  th.setAttribute('width', '150')
+	  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Description"
+		  th.setAttribute('width', '150')
+	  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Status"
+		  th.setAttribute('width', '150')
+		
+
+		  if (request.status >= 200 && request.status < 400) {
+		    data.forEach((re) => {
+		      console.log(re.reimbAmount) 
+		      
+		      tr = document.createElement("tr")
+	  		  table.appendChild(tr)
+			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbSubmitted}`
+			  td.setAttribute('width', '150')
+		  
+			  td = document.createElement("td")
+			  tr.appendChild(td)     
+			  td.innerHTML = `${re.reimbAmount}`
+			  td.setAttribute('width', '150')
+		  
+			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbDescripton}`
+			  td.setAttribute('width', '150')
+		  
+			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbStatus}`
+			  td.setAttribute('width', '150')
+		    
+		    })
+		  } else {
+		    console.log('error')
+		  }  
+		}
+
+		request.send()
+
+
+		function logout() {
+
+			let xhr = new XMLHttpRequest();
+
+			xhr.open('POST', 'http://localhost:8080/reimbursement/logout');
+			xhr.send();
+
+			sessionStorage.removeItem('currentUser');
+
+			window.location = 'http://localhost:8080/reimbursement/';
+
+		}
+		
+		function openForm() {
+			document.getElementById("formNewReimb").style.display = "block";
+		}
+		
+ 		function sendReimb() {
+			console.log("Sending reimbursement...");
+			
+			let reimbType = document.getElementById('selectType').value;
+			
+			let reimbAmount = document.getElementById('amountId').value;
+			
+			let reimbDescription = document.getElementById('descripId').value;
+			
+			let reimbReceipt = document.getElementById('uploadReimb').value;
+			
+			let sendReimbObj = {
+					reimbType: reimbType,
+					reimbAmount: reimbAmount,
+					reimbDescription: reimbDescription,
+					reimbReceipt: reimbReceipt
+			}
+			
+			let xhr = new XMLHttpRequest();
+			
+			xhr.open("POST", 'http://localhost:8080/reimbursement/sendReimb');
+			
+			xhr.send(JSON.stringify(sendReimbObj));
+		}
+ 		
+	</script>
+
+</body>
+</html>

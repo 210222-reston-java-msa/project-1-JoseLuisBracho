@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Employee Reimbursement System</title>
+<link rel="icon" href="favicon.ico">
+</head>
+<body>
+
+<div class="container-fluid mx-auto">
+	<section>
+
+		<form method="POST" onsubmit="login(event.preventDefault())">
+			<fieldset>
+				<legend>LOGIN</legend>
+				<br>
+				<label for=user>Username</label> 
+				<input type="text" name="user" id="user_id" placeholder="Type your Username" required/> 
+				<br><br><br>
+				
+				<label for="pass">Password</label> 
+				<input type="password" name="pass" id="pass_id" required/> 
+				<br><br><br>
+				
+				<button type="submit">Go</button>
+			</fieldset>
+		</form>
+	</section>
+</div>
+	<script src="scripts/index.js"></script>
+
+</body>
+</html>

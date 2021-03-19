@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <meta charset="ISO-8859-1"> -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Manager Reimbursement System</title>
+<link rel="icon" href="favicon.ico">
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+	crossorigin="anonymous">
+
+<style>
+.hidden {
+	display: none;
+}
+</style>
+
+</head>
+
+<body>
+
+	<div class="container-fluid mx-auto">
+		<h2 id="welcome">Manager Page!!!</h2>
+
+		<form id="formNewReimb">
+			<fieldset>
+				<legend>Reimbursement Form</legend>
+
+				<label for="selectUser">Select Employee</label>
+				<select	name="selectUser" id="selectUser" onchange="selectUserFunc()"></select>
+				
+				<label for="selectStatus">Select Status</label>
+				<select	name="selectStatus" id="selectStatus" onchange="selectStatusFunc()"></select><br><br>
+				
+				<label for="userFirstName" class="hidden">First Name</label>
+				<input type="text" name="userFirstName" class="hidden" id="userFirstName" />
+				
+				<label for="userLastName" class="hidden">Last Name</label>
+				<input type="text" name="userLastName" class="hidden" id="userLastName" />
+
+			</fieldset>
+
+		</form>
+
+		<br> <br>
+
+		<table class="table table-striped" id="tableManagerReimb">
+		</table>
+
+	</div>
+
+	<br>
+	<br>
+	<br>
+
+	<form id="formUpdateReimb">
+		<fieldset>
+			<legend>Resolve a Reimbursement</legend>
+
+			<label for="reimbNumber #">Reimbursement #</label> <input type="text"
+				name="reimbNumber" id="reimbId"> <br> <br>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="resolved"
+					id="approve" value="5" checked> <label
+					class="form-check-label" for="approve"> Approve
+					Reimbursement </label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="resolved"
+					id="deny" value="6"> <label class="form-check-label"
+					for="deny"> Deny Reimbursement </label>
+			</div>
+			<br> <br> <label for="description">Description</label>
+			<textarea name="description" id="descripId"></textarea>
+			<br> <br>
+		</fieldset>
+
+		<button onclick="reimbUpdate()">Update</button>
+	</form>
+
+	<br>
+	<br>
+
+	<button onclick="logout()">Logout</button>
+	<br>
+	<br>
+
+	<script>
+		let welcome = document.getElementById('welcome');
+
+		let userString = sessionStorage.getItem('currentUser');
+
+		if (userString === null) {
+			window.location = 'http://localhost:8080/reimbursement/';
+
+		} else {
+			let currentUser = JSON.parse(userString);
+
+			console.log(currentUser);
+
+			if (currentUser != null) {
+				welcome.innerHTML = "Welcome " + currentUser.firstName + " "
+						+ currentUser.lastName + " to Employee Reimbursement System (ers)";
+
+			}
+		}
+		
+	 	var request = new XMLHttpRequest()
+
+		request.open('POST', 'http://localhost:8080/reimbursement/allReimb', true)
+		request.onload = function () {
+		  // Begin accessing JSON data here
+		  var data = JSON.parse(this.response)
+		  let table = document.getElementById("tableManagerReimb")
+		  let tr = document.createElement("tr")
+		  table.appendChild(tr)
+		  
+		  let th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "UserId"
+		  th.setAttribute('width', '150')
+		  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Reimnursement #"
+		  th.setAttribute('width', '150')
+		  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Submitted Date"
+		  th.setAttribute('width', '150')
+	  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Amount ($)"
+		  th.setAttribute('width', '150')
+	  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Description"
+		  th.setAttribute('width', '150')
+	  
+		  th = document.createElement("th")
+		  tr.appendChild(th)
+		  th.innerHTML = "Status"
+		  th.setAttribute('width', '150')
+		
+
+		  if (request.status >= 200 && request.status < 400) {
+		    data.forEach((re) => {
+		      console.log(re.reimbAmount) 
+		      
+		      tr = document.createElement("tr")
+	  		  table.appendChild(tr)
+	  		  
+	  		  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbAuthor}`
+			  td.setAttribute('width', '150')
+			  
+  			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbId}`
+			  td.setAttribute('width', '150')
+					  
+			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbSubmitted}`
+			  td.setAttribute('width', '150')
+		  
+			  td = document.createElement("td")
+			  tr.appendChild(td)     
+			  td.innerHTML = `${re.reimbAmount}`
+			  td.setAttribute('width', '150')
+		  
+			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbDescripton}`
+			  td.setAttribute('width', '150')
+		  
+			  td = document.createElement("td")
+			  tr.appendChild(td)
+			  td.innerHTML = `${re.reimbStatus}`
+			  td.setAttribute('width', '150')
+		    
+		    })
+		  } else {
+		    console.log('error')
+		  }  
+		}
+
+		request.send()
+		
+		let selector = document.getElementById("selectUser")
+		let option = document.createElement("option")
+		option.value = 0
+		option.text = "All Usernames"
+		selector.add(option)
+
+		
+		function populateUsers() {
+		 	var request = new XMLHttpRequest()
+
+			request.open('GET', 'http://localhost:8080/reimbursement/allUsers', true)
+			request.onload = function () {
+			 // Begin accessing JSON data here
+			 var data = JSON.parse(this.response)
+			 console.log(data)
+			 let selector = document.getElementById("selectUser")
+			 let option = document.createElement("option")
+			 
+			 if (request.status >= 200 && request.status < 400) {
+		    	data.forEach((user) => {
+		      	console.log(user.userId)
+		      	let option = document.createElement("option")
+		      	option.value = `${user.userId}`
+		      	option.innerHTML = `${user.username}`
+		      	selector.add(option)
+		      	})
+		      	
+			 } else {
+				 console.log('error')
+			 }
+		}
+		 	request.send()
+		}
+		
+		window.onload = populateUsers();
+		
+
+		
+		
+		let selectora = document.getElementById("selectStatus")
+		let optiona = document.createElement("option")
+		optiona.value = 0
+		optiona.text = "All Status"
+		selectora.add(optiona)
+		
+		function populateStatus() {
+		 	var request = new XMLHttpRequest()
+
+			request.open('GET', 'http://localhost:8080/reimbursement/allStatus', true)
+			request.onload = function () {
+			 // Begin accessing JSON data here
+			 var data = JSON.parse(this.response)
+			 console.log(data)
+			 let selector = document.getElementById("selectStatus")
+			 let option = document.createElement("option")
+			 
+			 if (request.status >= 200 && request.status < 400) {
+		    	data.forEach((status) => {
+		      	console.log(status.statusId)
+		      	let option = document.createElement("option")
+		      	option.value = `${status.statusId}`
+		      	option.innerHTML = `${status.status}`
+		      	selector.add(option)
+		      	})
+		      	
+			 } else {
+				 console.log('error')
+			 }
+		}
+		 	request.send()
+		}
+		
+		window.onload = populateStatus();
+		
+		
+        function selectUserFunc() {  
+
+            var result = document.getElementById("selectUser").value;  
+            var table = document.getElementById("tableManagerReimb")
+
+            console.log(`result: ${result}`)
+            
+            if (result != 0) {
+            
+            for (let i = 1; i < table.rows.length; i++) {
+            	var objCells = table.rows.item(i).cells
+            	
+            	var colNumber = 0
+            	
+            	if (objCells.item(colNumber).innerHTML != result) {
+            		table.rows.item(i).style.display = "none";
+            	} else {
+            		table.rows.item(i).style.display = "";
+            	}
+            }
+        	} else {
+				for (let i = 0; i < table.rows.length; i++) {
+					table.rows.item(i).style.display = "";
+				}
+			}
+        } 
+        
+        function selectStatusFunc() {  
+
+            var result = document.getElementById("selectStatus").value
+            var table = document.getElementById("tableManagerReimb")
+
+            if (result != 0) {
+                
+                for (let i = 1; i < table.rows.length; i++) {
+                	var objCells = table.rows.item(i).cells
+                	
+                	var colNumber = 5
+                	
+                	if (objCells.item(colNumber).innerHTML != result) {
+                		table.rows.item(i).style.display = "none";
+                	} else {
+                		table.rows.item(i).style.display = "";
+                	}
+                }
+            	} else {
+    				for (let i = 0; i < table.rows.length; i++) {
+    					table.rows.item(i).style.display = "";
+    				}
+    			}
+            } 
+        
+        
+ 		function reimbUpdate() {
+			console.log("Updating reimbursement...");
+			
+			let reimbId = document.getElementById('reimbId').value;
+			
+			var reimbStatus;
+			let ele = document.getElementsByName("resolved")
+			for (let i = 0; i < ele.length; i++) {
+				if (ele[i].checked) {
+					reimbStatus = ele[i].value
+				}
+			}
+			
+			let reimbDescription = document.getElementById('descripId').value;
+			
+			
+			let updateReimbObj = {
+					reimbId: reimbId,
+					reimbStatus: reimbStatus,
+					reimbDescription: reimbDescription
+		
+			}
+			
+			console.log(updateReimbObj)
+			
+			let xhr = new XMLHttpRequest();
+			
+			xhr.open("POST", 'http://localhost:8080/reimbursement/updateReimb');
+			
+			xhr.send(JSON.stringify(updateReimbObj));
+		}
+        
+		function logout() {
+
+			let xhr = new XMLHttpRequest();
+
+			xhr.open('POST', 'http://localhost:8080/reimbursement/logout');
+			xhr.send();
+
+			sessionStorage.removeItem('currentUser');
+
+			window.location = 'http://localhost:8080/reimbursement/';
+
+		}
+ 		
+	</script>
+
+</body>
+</html>
