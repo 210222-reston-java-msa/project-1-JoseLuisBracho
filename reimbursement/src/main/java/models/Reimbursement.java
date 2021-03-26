@@ -1,7 +1,6 @@
 package models;
 
 import java.io.FileInputStream;
-import java.sql.Blob;
 import java.util.Date;
 
 public class Reimbursement {

@@ -18,7 +18,7 @@ import services.ReimbursementService;
 import services.UserService;
 import utils.MailUtil; 
 
-public class ForTestins {
+public class ForTestings {
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub

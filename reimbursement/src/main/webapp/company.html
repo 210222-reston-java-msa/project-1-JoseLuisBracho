@@ -10,6 +10,8 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
 	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
 	crossorigin="anonymous">
+	
+	<link rel="stylesheet" href="./scripts/styles.css">
 
 <style>
 
@@ -23,44 +25,64 @@ display:none;
 <body>
 
 	<div class="container-fluid mx-auto">
+			<div class="jumbotron text-center">
+		<img id="icon-jum" src="favicon.ico">
+			<h2> Employee reimbursement system for employees</h2>
+		</div>
 		<h2 id="welcome">Ya estoy adentro!!!</h2>
 		
-		<table class="table table-striped" id="tableUserReimb">
+		<table class="table table-bordered table-sm" id="tableUserReimb">
 		</table>
 			
 	</div>
 
-	<section>
+		<div class="wrapper fadeInDown hidden" id="formNewReimb">
+		
+		<div id="formContent">	
 
-		<form class="hidden" id="formNewReimb" enctype="multipart/form-data" method="POST" onsubmit="sendReimb()">
+		<form enctype="multipart/form-data" method="POST" onsubmit="sendReimb()">
 			<fieldset>
-				<legend>Reimbursement Form</legend>
-				<select name="selectType" id="selectType">
+				<legend class="legend">Reimbursement Form</legend>
+
+				<select class="form-control" name="selectType" id="selectType">
 					<option value="0">Select expenses type:</option>
 					<option value="1">Relocation</option>
 					<option value="2">Travel</option>
 					<option value="3">Represent</option>
-				</select><br><br>
-				<label for="amount">Amount</label>
-				<input type="number" name="amount" id="amountId" min="0" placeholder="amount" required /><br><br>
-				<label for="description">Description</label>
-				<textarea name="description" id="descripId"></textarea><br><br>
+				</select><br>
+				
+				<input class="form-control" type="number" name="amount" id="amountId" min="0.0" placeholder="Amount" required /><br><br>
+				
+				
+				<textarea class="form-control" name="description" id="descripId" placeholder="Description"></textarea><br><br>
+				
 				<label for="uploadReimb">Upload your receipt</label><br>
-				<input type="file" name="uploadReimb" id="uploadReimb"/><br><br><br><br>
-				<input type="submit" value="send"/>
+				<input class="form-control" type="file" name="uploadReimb" id="uploadReimb"/><br><br>
+				
+				<button class="btn btn-success" onclick="closeForm()">Close</button>
+				<input class="btn btn-success" type="submit" value="send"/><br><br>
 
 			</fieldset>
 
 		</form>
-	</section>
+		
+		</div>
+		</div>
+
 	
 	<br><br><br>
 	
-		<button onclick="openForm()">New Reimbursement</button>
+		<button class="btn btn-success" onclick="openForm()">New Reimbursement</button>
+		
+		
+		<button class="btn btn-success" onclick="logout()">Logout</button>
 		<br><br>
 		
-		<button onclick="logout()">Logout</button>
-		<br><br>
+	<div id="formFooter">
+	
+	<h2>Reserved Rights &copy 2021</h2>
+	
+	</div>
 
 	<script>
 		let welcome = document.getElementById('welcome');
@@ -163,6 +185,10 @@ display:none;
 		
 		function openForm() {
 			document.getElementById("formNewReimb").style.display = "block";
+		}
+		
+		function closeForm() {
+			document.getElementById("formNewReimb").style.display = "none";
 		}
 		
  		function sendReimb() {

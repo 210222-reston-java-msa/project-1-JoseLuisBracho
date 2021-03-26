@@ -11,6 +11,8 @@
 	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
 	crossorigin="anonymous">
 
+<link rel="stylesheet" href="./scripts/styles.css">
+
 <style>
 .hidden {
 	display: none;
@@ -22,70 +24,90 @@
 <body>
 
 	<div class="container-fluid mx-auto">
+		<div class="jumbotron text-center">
+		<img id="icon-jum" src="favicon.ico">
+			<h2> Employee reimbursement system for managers</h2>
+		</div>
 		<h2 id="welcome">Manager Page!!!</h2>
+		
+		<div class="wrapper fadeInDown">
+		
+		<div id="formContent">		
 
-		<form id="formNewReimb">
+		<form id="formNewReimb"><br>
 			<fieldset>
-				<legend>Reimbursement Form</legend>
-
-				<label for="selectUser">Select Employee</label>
-				<select	name="selectUser" id="selectUser" onchange="selectUserFunc()"></select>
+				<legend class="legend">Reimbursement Filters</legend>
 				
-				<label for="selectStatus">Select Status</label>
-				<select	name="selectStatus" id="selectStatus" onchange="selectStatusFunc()"></select><br><br>
+				<select class="form-control" name="selectUser" id="selectUser" onchange="selectUserFunc()"></select><br><br>
+
+				<select class="form-control" name="selectStatus" id="selectStatus" onchange="selectStatusFunc()"></select><br><br>
 				
 				<label for="userFirstName" class="hidden">First Name</label>
-				<input type="text" name="userFirstName" class="hidden" id="userFirstName" />
+				<input class="form-control hidden" type="text" name="userFirstName" id="userFirstName" />
 				
 				<label for="userLastName" class="hidden">Last Name</label>
-				<input type="text" name="userLastName" class="hidden" id="userLastName" />
+				<input class="form-control hidden" type="text" name="userLastName" id="userLastName" />
 
 			</fieldset>
 
 		</form>
+		
+		</div>
+		
+		</div>
 
 		<br> <br>
 
-		<table class="table table-striped" id="tableManagerReimb">
+		<table class="table table-bordered table-sm" id="tableManagerReimb">
 		</table>
+		
+		
+		<div class="wrapper fadeInDown hidden" id="formUpdateReimb">
+		
+		<div id="formContent">	
 
-	</div>
-
-	<br>
-	<br>
-	<br>
-
-	<form id="formUpdateReimb">
+	<form><br>
 		<fieldset>
-			<legend>Resolve a Reimbursement</legend>
+			<legend class="legend">Resolve a Reimbursement</legend>
 
-			<label for="reimbNumber #">Reimbursement #</label> <input type="text"
-				name="reimbNumber" id="reimbId"> <br> <br>
+			<input class="form-control" type="text" name="reimbNumber" placeholder="Reimbursement Number" id="reimbId"> <br> <br>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="resolved"
-					id="approve" value="5" checked> <label
-					class="form-check-label" for="approve"> Approve
-					Reimbursement </label>
+				<input class="form-check-input" type="radio" name="resolved" id="approve" value="5" checked>
+				<label for="approve"> Approve Reimbursement </label>
 			</div>
-			<div class="form-check">
-				<input class="form-check-input" type="radio" name="resolved"
-					id="deny" value="6"> <label class="form-check-label"
-					for="deny"> Deny Reimbursement </label>
+			<div>
+				<input class="form-check-input" type="radio" name="resolved" id="deny" value="6">
+				<label for="deny"> Deny Reimbursement </label>
 			</div>
-			<br> <br> <label for="description">Description</label>
-			<textarea name="description" id="descripId"></textarea>
+			<br>
+			<div>
+
+			<textarea class="form-control" name="description" placeholder="Description" id="descripId"></textarea>
+			</div>
 			<br> <br>
 		</fieldset>
+		
+		
+		<button class="btn btn-success" onclick="closeForm()">Cancel</button>
 
-		<button onclick="reimbUpdate()">Update</button>
+		<button class="btn btn-success" onclick="reimbUpdate()">Update</button><br><br>
 	</form>
-
-	<br>
-	<br>
-
-	<button onclick="logout()">Logout</button>
-	<br>
-	<br>
+	
+	</div>
+	
+	</div>
+	
+	</div>
+	
+<button class="btn btn-success" onclick="openForm()">New Reimbursement</button>
+	<button class="btn btn-success"onclick="logout()">Logout</button>
+	<br><br>
+	
+	<div id="formFooter">
+	
+	<h2>Reserved Rights &copy 2021</h2>
+	
+	</div>
 
 	<script>
 		let welcome = document.getElementById('welcome');
@@ -102,7 +124,7 @@
 
 			if (currentUser != null) {
 				welcome.innerHTML = "Welcome " + currentUser.firstName + " "
-						+ currentUser.lastName + " to Employee Reimbursement System (ers)";
+						+ currentUser.lastName + " !";
 
 			}
 		}
@@ -124,7 +146,7 @@
 		  
 		  th = document.createElement("th")
 		  tr.appendChild(th)
-		  th.innerHTML = "Reimnursement #"
+		  th.innerHTML = "Reimbursement"
 		  th.setAttribute('width', '150')
 		  
 		  th = document.createElement("th")
@@ -196,7 +218,7 @@
 		let selector = document.getElementById("selectUser")
 		let option = document.createElement("option")
 		option.value = 0
-		option.text = "All Usernames"
+		option.text = "Select Username"
 		selector.add(option)
 
 		
@@ -235,7 +257,7 @@
 		let selectora = document.getElementById("selectStatus")
 		let optiona = document.createElement("option")
 		optiona.value = 0
-		optiona.text = "All Status"
+		optiona.text = "Select Status"
 		selectora.add(optiona)
 		
 		function populateStatus() {
@@ -351,6 +373,14 @@
 			xhr.open("POST", 'http://localhost:8080/reimbursement/updateReimb');
 			
 			xhr.send(JSON.stringify(updateReimbObj));
+		}
+ 		
+		function openForm() {
+			document.getElementById("formUpdateReimb").style.display = "block";
+		}
+		
+		function closeForm() {
+			document.getElementById("formUpdateReimb").style.display = "none";
 		}
         
 		function logout() {
